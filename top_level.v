@@ -67,4 +67,19 @@ assign divisor_val_sig = (SW[1:0] == 2'b00) ? 26'd5000000 :
                          (SW[1:0] == 2'b10) ? 26'd1000000 :
                          26'd500000; 
 
+
+reg key_random_d; 
+wire key_press = ~KEY[1]; 
+
+
+always @(posedge CLOCK_50 or negedge KEY[0]) begin
+    if (!KEY[0]) 
+        key_random_d <= 1'b0;
+    else 
+        key_random_d <= key_press;
+end
+
+
+assign key_random_pulse_sig = key_press && !key_random_d;
+
 endmodule
