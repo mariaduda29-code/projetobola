@@ -1,10 +1,11 @@
 module divisor
 #(
-	parameter NUM_BITS = 26,
-	parameter MOD = 50_000_000
+	parameter NUM_BITS = 26
 )
 (
 	input wire clock_in, reset_n, enable,
+	output reg clock_out
+	input wire [NUM_BITS - 1:0] divisor_value,
 	output reg clock_out
 );
 
@@ -14,13 +15,17 @@ module divisor
   begin
   	if(reset_n == 0)
   	begin
-  		count <= {NUM_BITS{1'b0}};
-  		clock_out <= 1'b0;
+  		count <= 0;
+  		clock_out <= 0;
   	end
   	else if(enable == 1)
   	begin
-  		count <= (count < MOD) ? count + 1'b1 : {NUM_BITS{1'b0}};
-  		clock_out <= (count < MOD / 2) ? 1'b0 : 1'b1;
+  		if (count == divisor_value - 1) begin
+  			count <= 0;
+  			clock_out <= ~clock_out; 
+  		end else begin
+  			count <= count + 1;
+  		end
   	end
   end
   
